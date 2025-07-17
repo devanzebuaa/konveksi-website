@@ -26,8 +26,13 @@ ENV HEALTHCHECK_PATH="/up"
 
 # Copy the app files
 COPY --chown=www-data:www-data . /var/www/html
-RUN mkdir -p /var/www/html/storage/app/public && \
-    chown -R www-data:www-data /var/www/html/storage
+# Create Laravel's storage directories and set permissions
+RUN mkdir -p /var/www/html/storage/app/public \
+    /var/www/html/storage/framework/sessions \
+    /var/www/html/storage/framework/views \
+    /var/www/html/storage/framework/cache && \
+    chown -R www-data:www-data /var/www/html/storage && \
+    chmod -R 775 /var/www/html/storage
 
 # Run Composer install
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
