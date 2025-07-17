@@ -24,7 +24,7 @@ services:
       MAIL_FROM_NAME: "${APP_NAME}"
       MAIL_ENCRYPTION: tls
     ports:
-      - "6310:8080"
+      - "3421:8080"
     volumes:
       - konveksi_storage:/var/www/html/storage
     depends_on:
@@ -34,7 +34,7 @@ services:
 
   db:
     image: mysql:8.0
-    container_name: mysql_db
+    container_name: mysql_db_konveksi
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: secret
@@ -48,13 +48,13 @@ services:
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin
+    container_name: phpmyadmin_konveksi
     restart: unless-stopped
     environment:
       PMA_HOST: db
       MYSQL_ROOT_PASSWORD: secret
     ports:
-      - "1289:80"
+      - "1293:80"
     depends_on:
       - db
     networks:
