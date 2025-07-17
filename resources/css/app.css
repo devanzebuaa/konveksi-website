@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================
+   Gallery Card Styling
+============================ */
+.gallery-card {
+    @apply bg-white shadow-md rounded-lg overflow-hidden;
+}
+
+/* Gambar dengan hover efek */
+.gallery-image {
+    @apply h-[250px] w-full object-cover rounded-t-lg transition-transform duration-300 ease-in-out;
+}
+
+.gallery-image:hover {
+    @apply scale-105;
+}
+
+/* Optional: Body dan Text Styling */
+.gallery-body {
+    @apply p-4;
+}
+
+.gallery-title {
+    @apply text-lg font-semibold mb-1;
+}
+
+.gallery-description {
+    @apply text-gray-600 text-sm;
+}
+
+
+/* ============================
+   Product Page Animations
+============================ */
+
+/* Slide Up Animation */
+@keyframes slideUp {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Slide Right Animation */
+@keyframes slideRight {
+    0% {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Slide Left Animation */
+@keyframes slideLeft {
+    0% {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.animate-slide-up {
+    animation: slideUp 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+.animate-slide-right {
+    animation: slideRight 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+.animate-slide-left {
+    animation: slideLeft 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+.delay-1 {
+    animation-delay: 0.3s;
+}
+
+.delay-2 {
+    animation-delay: 0.6s;
+}
+
+.hover-shadow {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-shadow:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.btn-press {
+    transition: transform 0.1s ease-in-out;
+}
+
+.btn-press:active {
+    transform: scale(0.96);
+}
