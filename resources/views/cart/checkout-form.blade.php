@@ -13,6 +13,16 @@
     <form action="{{ route('cart.checkout') }}" method="POST" enctype="multipart/form-data" class="card p-4 shadow-sm">
         @csrf
 
+        {{-- Input Alamat Pengiriman --}}
+        <div class="mb-3">
+            <label for="address" class="form-label">Alamat Pengiriman</label>
+            <textarea name="address" id="address" class="form-control" rows="3" required>{{ old('address') }}</textarea>
+            @error('address')
+                <div class="text-danger small mt-1">{{ $message }}</div>
+            @enderror
+        </div>
+
+        {{-- Metode Pembayaran --}}
         <div class="mb-3">
             <label for="payment_method" class="form-label">Metode Pembayaran</label>
             <select name="payment_method" id="payment_method" class="form-select" required onchange="togglePaymentFields()">
@@ -22,6 +32,7 @@
             </select>
         </div>
 
+        {{-- Bank --}}
         <div id="bank_field" class="mb-3 d-none">
             <label for="bank_name" class="form-label">Pilih Bank</label>
             <select name="bank_name" id="bank_name" class="form-select">
@@ -33,6 +44,7 @@
             </select>
         </div>
 
+        {{-- E-Wallet --}}
         <div id="wallet_field" class="mb-3 d-none">
             <label for="wallet_type" class="form-label">Pilih E-Wallet</label>
             <select name="wallet_type" id="wallet_type" class="form-select">
@@ -45,6 +57,7 @@
             </select>
         </div>
 
+        {{-- Bukti Pembayaran --}}
         <div class="mb-3">
             <label for="payment_proof" class="form-label">Upload Bukti Pembayaran</label>
             <input type="file" name="payment_proof" id="payment_proof" class="form-control" required>

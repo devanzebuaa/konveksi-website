@@ -47,6 +47,11 @@
         </div>
 
         <div class="mb-3">
+            <label for="address" class="form-label">Alamat Pengiriman</label>
+            <textarea name="address" id="address" class="form-control" rows="3" required>{{ old('address') }}</textarea>
+        </div>
+
+        <div class="mb-3">
             <label for="payment_proof" class="form-label">Upload Bukti Pembayaran</label>
             <input type="file" name="payment_proof" class="form-control" accept="image/*" required>
         </div>

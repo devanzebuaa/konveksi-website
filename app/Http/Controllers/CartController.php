@@ -154,7 +154,7 @@ class CartController extends Controller
             'ukuran'         => $item->ukuran,
             'jumlah'         => $item->jumlah,
             'total_harga'    => $item->jumlah * $item->product->price,
-            'status'         => 'Menunggu Pembayaran',
+            'status'         => 'Pembayaran Selesai',
             'payment_method' => $validated['payment_method'],
             'bank_name'      => $validated['payment_method'] === 'bank' ? $validated['bank_name'] : null,
             'wallet_type'    => $validated['payment_method'] === 'e-wallet' ? $validated['wallet_type'] : null,

@@ -9,6 +9,7 @@
     <div class="card mb-4">
         <div class="card-body">
             <p><strong>Pemesan:</strong> {{ $order->user->name }}</p>
+            <p><strong>Alamat Pengiriman:</strong> {{ $order->address }}</p>
             <p><strong>Produk:</strong> {{ $order->product->name }}</p>
             <p><strong>Warna:</strong> {{ ucfirst($order->warna) }}</p>
             <p><strong>Ukuran:</strong> {{ $order->ukuran }}</p>
@@ -46,7 +47,7 @@
             {{-- Form Update Status --}}
             <form action="{{ route('admin.orders.updateStatus', $order->id) }}" method="POST" class="mt-4">
                 @csrf
-                @method('PATCH') {{-- ✅ Ganti ke PATCH --}}
+                @method('PATCH')
                 <div class="mb-3">
                     <label for="status" class="form-label">Update Status</label>
                     <select name="status" id="status" class="form-select" required>

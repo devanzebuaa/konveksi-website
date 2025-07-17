@@ -22,7 +22,8 @@ class Order extends Model
         'payment_method',
         'bank_name',
         'wallet_type',
-        'payment_proof'
+        'payment_proof',
+        'address'
     ];
 
     public function product()
