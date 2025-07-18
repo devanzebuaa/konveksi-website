@@ -28,7 +28,7 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-   public function store(Request $request): RedirectResponse
+   public function store(Request $request)
 {
     $request->validate([
         'name' => 'required|string|max:255',
@@ -47,11 +47,8 @@ class RegisteredUserController extends Controller
     Auth::login($user);
 
     // Redirect sesuai role
-    if ($user->is_admin) {
-        return redirect()->route('dashboard'); // admin dashboard
-    } else {
-        return redirect()->route('home.index'); // route user biasa
-    }
+        return Inertia::location(route('home.index'));
+
 }
 
 }

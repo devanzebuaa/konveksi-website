@@ -52,7 +52,7 @@ class CheckoutController extends Controller
                 'warna'          => $item->warna,
                 'ukuran'         => $item->ukuran,
                 'total_harga'    => $item->jumlah * $item->product->price,
-                'status'         => 'Pembayaran Selesai',
+                'status'         => 'Menunggu Pembayaran',
                 'payment_method' => $request->payment_method,
                 'bank_name'      => $request->bank_name,
                 'wallet_type'    => $request->wallet_type,

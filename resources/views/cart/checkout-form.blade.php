@@ -16,7 +16,7 @@
         {{-- Input Alamat Pengiriman --}}
         <div class="mb-3">
             <label for="address" class="form-label">Alamat Pengiriman</label>
-            <textarea name="address" id="address" class="form-control" rows="3" required>{{ old('address') }}</textarea>
+            <textarea name="address" id="address" class="form-control @error('address') is-invalid @enderror" rows="3" required>{{ old('address') }}</textarea>
             @error('address')
                 <div class="text-danger small mt-1">{{ $message }}</div>
             @enderror
@@ -25,42 +25,48 @@
         {{-- Metode Pembayaran --}}
         <div class="mb-3">
             <label for="payment_method" class="form-label">Metode Pembayaran</label>
-            <select name="payment_method" id="payment_method" class="form-select" required onchange="togglePaymentFields()">
+            <select name="payment_method" id="payment_method" class="form-select @error('payment_method') is-invalid @enderror" required onchange="togglePaymentFields()">
                 <option value="">-- Pilih Metode --</option>
-                <option value="bank">Transfer Bank</option>
-                <option value="e-wallet">E-Wallet</option>
+                <option value="bank" {{ old('payment_method') === 'bank' ? 'selected' : '' }}>Transfer Bank</option>
+                <option value="e-wallet" {{ old('payment_method') === 'e-wallet' ? 'selected' : '' }}>E-Wallet</option>
             </select>
+            @error('payment_method')
+                <div class="text-danger small mt-1">{{ $message }}</div>
+            @enderror
         </div>
 
         {{-- Bank --}}
-        <div id="bank_field" class="mb-3 d-none">
+        <div id="bank_field" class="mb-3 {{ old('payment_method') === 'bank' ? '' : 'd-none' }}">
             <label for="bank_name" class="form-label">Pilih Bank</label>
-            <select name="bank_name" id="bank_name" class="form-select">
+            <select name="bank_name" id="bank_name" class="form-select @error('bank_name') is-invalid @enderror">
                 <option value="">-- Pilih Bank --</option>
-                <option value="BCA">BCA</option>
-                <option value="BRI">BRI</option>
-                <option value="Mandiri">Mandiri</option>
-                <option value="BSI">BSI</option>
+                @foreach (['BCA', 'BRI', 'Mandiri', 'BSI'] as $bank)
+                    <option value="{{ $bank }}" {{ old('bank_name') === $bank ? 'selected' : '' }}>{{ $bank }}</option>
+                @endforeach
             </select>
+            @error('bank_name')
+                <div class="text-danger small mt-1">{{ $message }}</div>
+            @enderror
         </div>
 
         {{-- E-Wallet --}}
-        <div id="wallet_field" class="mb-3 d-none">
+        <div id="wallet_field" class="mb-3 {{ old('payment_method') === 'e-wallet' ? '' : 'd-none' }}">
             <label for="wallet_type" class="form-label">Pilih E-Wallet</label>
-            <select name="wallet_type" id="wallet_type" class="form-select">
+            <select name="wallet_type" id="wallet_type" class="form-select @error('wallet_type') is-invalid @enderror">
                 <option value="">-- Pilih E-Wallet --</option>
-                <option value="DANA">DANA</option>
-                <option value="OVO">OVO</option>
-                <option value="GoPay">GoPay</option>
-                <option value="ShopeePay">ShopeePay</option>
-                <option value="SeaBank">SeaBank</option>
+                @foreach (['DANA', 'OVO', 'GoPay', 'ShopeePay', 'SeaBank'] as $wallet)
+                    <option value="{{ $wallet }}" {{ old('wallet_type') === $wallet ? 'selected' : '' }}>{{ $wallet }}</option>
+                @endforeach
             </select>
+            @error('wallet_type')
+                <div class="text-danger small mt-1">{{ $message }}</div>
+            @enderror
         </div>
 
         {{-- Bukti Pembayaran --}}
         <div class="mb-3">
             <label for="payment_proof" class="form-label">Upload Bukti Pembayaran</label>
-            <input type="file" name="payment_proof" id="payment_proof" class="form-control" required>
+            <input type="file" name="payment_proof" id="payment_proof" class="form-control @error('payment_proof') is-invalid @enderror" required>
             @error('payment_proof')
                 <div class="text-danger small mt-1">{{ $message }}</div>
             @enderror
@@ -78,5 +84,9 @@
         document.getElementById('bank_field').classList.toggle('d-none', method !== 'bank');
         document.getElementById('wallet_field').classList.toggle('d-none', method !== 'e-wallet');
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        togglePaymentFields(); // Supaya field muncul sesuai old saat reload
+    });
 </script>
 @endsection

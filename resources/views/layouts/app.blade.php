@@ -149,9 +149,9 @@
                 </div>
                 <div class="col-md-4">
                     <h5>Kontak</h5>
-                    <p><i class="fas fa-map-marker-alt"></i> Jl. Konveksi No. 135, Purwokerto</p>
-                    <p><i class="fas fa-phone"></i> 087872459410</p>
-                    <p><i class="fas fa-envelope"></i> info@dinarakonveksi.com</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Jl. Diponegoro No 01</p>
+                    <p><i class="fas fa-phone"></i> 082324-872377</p>
+                    <p><i class="fas fa-envelope"></i> dinarakonveksi@gmail.com</p>
                 </div>
                 <div class="col-md-4">
                     <h5>Sosial Media</h5>
