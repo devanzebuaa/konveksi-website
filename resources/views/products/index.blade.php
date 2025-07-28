@@ -82,7 +82,7 @@
 @section('styles')
 <style>
     .product-header {
-        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('{{ asset('images/product-bg.jpg') }}');
+        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("{{ asset('images/product-bg.jpg') }}");
         background-size: cover;
         background-position: center;
     }

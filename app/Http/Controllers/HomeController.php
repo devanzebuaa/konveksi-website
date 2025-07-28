@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Models\Order;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,7 +15,11 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $featuredProducts = Product::where('is_featured', true)->get();
+        // Ambil varian yang ditampilkan di beranda, termasuk relasi ke produk
+        $featuredVariants = ProductVariant::where('is_featured', true)
+            ->with('product')
+            ->get();
+
         $recentStatus = collect(); // Kosong default
 
         if (Auth::check()) {
@@ -32,7 +37,7 @@ class HomeController extends Controller
             }
         }
 
-        return view('home', compact('featuredProducts', 'recentStatus'));
+        return view('home', compact('featuredVariants', 'recentStatus'));
     }
 
     /**

@@ -29,8 +29,8 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
-        // Panggil relasi variants biar sekalian ke load
-        $product->load('variants');
+        // Load relasi untuk variants dan sizePrices
+        $product->load(['variants', 'sizePrices']);
 
         return view('products.show', [
             'product' => $product,

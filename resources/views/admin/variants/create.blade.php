@@ -22,6 +22,15 @@
             @enderror
         </div>
 
+        {{-- Harga --}}
+        <div class="mb-3">
+            <label for="price" class="form-label">Harga</label>
+            <input type="number" name="price" id="price" class="form-control" value="{{ old('price') }}" min="0" required>
+            @error('price')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
+        </div>
+
         {{-- Gambar Varian --}}
         <div class="mb-3">
             <label for="image" class="form-label">Gambar Varian</label>
@@ -40,6 +49,7 @@
             @enderror
         </div>
 
+        {{-- Tombol --}}
         <button type="submit" class="btn btn-success">Simpan Varian</button>
         <a href="{{ route('admin.variants.index', $product->id) }}" class="btn btn-secondary">Kembali</a>
     </form>

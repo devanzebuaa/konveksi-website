@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class ProductVariantController extends Controller
@@ -28,11 +27,11 @@ class ProductVariantController extends Controller
     {
         $validated = $request->validate([
             'color' => 'required|string|max:50',
+            'price' => 'required|numeric|min:0',
             'image' => 'nullable|image|max:2048',
             'stock' => 'required|integer|min:0',
         ]);
 
-        // dd($validated);
         $imagePath = null;
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('variants', 'public');
@@ -40,8 +39,10 @@ class ProductVariantController extends Controller
 
         $product->variants()->create([
             'color' => $validated['color'],
+            'price' => $validated['price'],
             'image' => $imagePath,
-            'stock' => (int)$validated['stock'],
+            'stock' => (int) $validated['stock'],
+            'is_featured' => $request->boolean('is_featured'),
         ]);
 
         return redirect()->route('admin.variants.index', $product->id)
@@ -57,6 +58,7 @@ class ProductVariantController extends Controller
     {
         $validated = $request->validate([
             'color' => 'required|string|max:50',
+            'price' => 'required|numeric|min:0',
             'image' => 'nullable|image|max:2048',
             'stock' => 'required|integer|min:0',
         ]);
@@ -65,12 +67,13 @@ class ProductVariantController extends Controller
             if ($variant->image && Storage::disk('public')->exists($variant->image)) {
                 Storage::disk('public')->delete($variant->image);
             }
-
             $variant->image = $request->file('image')->store('variants', 'public');
         }
 
         $variant->color = $validated['color'];
+        $variant->price = $validated['price'];
         $variant->stock = $validated['stock'];
+        $variant->is_featured = $request->boolean('is_featured');
         $variant->save();
 
         return redirect()->route('admin.variants.index', $product->id)
@@ -86,5 +89,13 @@ class ProductVariantController extends Controller
         $variant->delete();
 
         return back()->with('success', 'Varian berhasil dihapus');
+    }
+
+    public function toggleFeatured(Product $product, ProductVariant $variant)
+    {
+        $variant->is_featured = !$variant->is_featured;
+        $variant->save();
+
+        return back()->with('success', 'Status unggulan varian diperbarui.');
     }
 }

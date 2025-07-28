@@ -4,12 +4,43 @@ namespace App\Http\Controllers;
 
 use App\Models\CartItem;
 use App\Models\ProductVariant;
+use App\Models\ProductSizePrice;
 use App\Models\Order;
+use App\Models\Message;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
+    // Fitur chat: tampilkan pesan untuk order tertentu
+    public function chat($orderId)
+    {
+        $order = Order::findOrFail($orderId);
+        // Pastikan user hanya bisa akses chat order miliknya
+        if ($order->user_id !== Auth::id()) {
+            abort(403, 'Tidak diizinkan mengakses chat ini.');
+        }
+        $messages = Message::where('order_id', $orderId)->with('sender')->orderBy('created_at')->get();
+        return view('chat.index', compact('order', 'messages'));
+    }
+
+    // Fitur chat: kirim pesan baru
+    public function sendMessage(Request $request, $orderId)
+    {
+        $order = Order::findOrFail($orderId);
+        if ($order->user_id !== Auth::id()) {
+            abort(403, 'Tidak diizinkan mengirim pesan ke order ini.');
+        }
+        $validated = $request->validate([
+            'content' => 'required|string',
+        ]);
+        Message::create([
+            'order_id' => $orderId,
+            'sender_id' => Auth::id(),
+            'content' => $validated['content'],
+        ]);
+        return redirect()->route('chat.show', $orderId);
+    }
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -27,17 +58,26 @@ class CartController extends Controller
             return back()->with('error', 'Varian tidak ditemukan.');
         }
 
+        $sizePrice = ProductSizePrice::where('product_id', $validated['product_id'])
+                                     ->where('size', $validated['ukuran'])
+                                     ->first();
+
+        if (!$sizePrice) {
+            return back()->with('error', 'Harga untuk ukuran ini tidak ditemukan.');
+        }
+
         if ($variant->stock < $validated['jumlah']) {
             return back()->with('error', 'Stok tidak mencukupi untuk varian ini.');
         }
 
         CartItem::create([
-            'user_id'     => Auth::id(),
-            'product_id'  => $validated['product_id'],
-            'variant_id'  => $variant->id,
-            'warna'       => $validated['warna'],
-            'ukuran'      => $validated['ukuran'],
-            'jumlah'      => $validated['jumlah'],
+            'user_id'      => Auth::id(),
+            'product_id'   => $validated['product_id'],
+            'variant_id'   => $variant->id,
+            'warna'        => $validated['warna'],
+            'ukuran'       => $validated['ukuran'],
+            'jumlah'       => $validated['jumlah'],
+            'harga_satuan' => $sizePrice->price, // menyimpan harga berdasarkan ukuran
         ]);
 
         return redirect()->route('cart.index')->with('success', 'Produk berhasil disimpan ke keranjang.');
@@ -49,6 +89,7 @@ class CartController extends Controller
             ? Auth::user()->cartItems()->with(['product', 'variant'])->get()
             : collect();
 
+        // Harga sudah disimpan di `harga_satuan`, jadi tidak perlu dicari ulang di blade
         return view('cart.index', compact('items'));
     }
 
@@ -105,7 +146,7 @@ class CartController extends Controller
                 'warna'          => $item->warna,
                 'ukuran'         => $item->ukuran,
                 'jumlah'         => $item->jumlah,
-                'total_harga'    => $item->jumlah * $item->product->price,
+                'total_harga'    => $item->jumlah * $item->harga_satuan,
                 'status'         => 'Menunggu Pembayaran',
                 'payment_method' => $validated['payment_method'],
                 'bank_name'      => $validated['payment_method'] === 'bank' ? $validated['bank_name'] : null,
@@ -156,7 +197,7 @@ class CartController extends Controller
             'warna'          => $item->warna,
             'ukuran'         => $item->ukuran,
             'jumlah'         => $item->jumlah,
-            'total_harga'    => $item->jumlah * $item->product->price,
+            'total_harga'    => $item->jumlah * $item->harga_satuan,
             'status'         => 'Menunggu Pembayaran',
             'payment_method' => $validated['payment_method'],
             'bank_name'      => $validated['payment_method'] === 'bank' ? $validated['bank_name'] : null,

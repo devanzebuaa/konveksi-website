@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Models\ProductSizePrice;
 use App\Models\CartItem;
+use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -14,7 +16,7 @@ class OrderController extends Controller
 {
     public function index()
     {
-        $orders = Order::with(['product', 'variant'])
+        $orders = Order::with(['items.product', 'items.variant'])
             ->where('user_id', Auth::id())
             ->latest()
             ->get();
@@ -44,24 +46,41 @@ class OrderController extends Controller
             return back()->with('error', 'Stok tidak mencukupi.');
         }
 
+        $sizePrice = $product->sizePrices()
+                             ->where('size', $request->ukuran)
+                             ->first();
+
+        if (!$sizePrice) {
+            return back()->with('error', 'Harga untuk ukuran tidak ditemukan.');
+        }
+
         $proofPath = $request->file('payment_proof')->store('bukti', 'public');
 
-        Order::create([
-            'user_id'        => Auth::id(),
-            'product_id'     => $product->id,
-            'variant_id'     => $variant->id,
-            'warna'          => $variant->color,
-            'ukuran'         => $request->ukuran,
-            'jumlah'         => $request->jumlah,
-            'total_harga'    => $product->price * $request->jumlah,
-            'status'         => 'Menunggu Pembayaran',
-            'payment_method' => $request->payment_method,
-            'bank_name'      => $request->payment_method === 'bank' ? $request->bank_name : null,
-            'wallet_type'    => $request->payment_method === 'e-wallet' ? $request->wallet_type : null,
-            'payment_proof'  => $proofPath,
-        ]);
+        DB::transaction(function () use ($request, $product, $variant, $sizePrice, $proofPath) {
+            $total_harga = $sizePrice->price * $request->jumlah;
 
-        $variant->decrement('stock', $request->jumlah);
+            $order = Order::create([
+                'user_id'        => Auth::id(),
+                'status'         => 'Menunggu Pembayaran',
+                'payment_method' => $request->payment_method,
+                'bank_name'      => $request->payment_method === 'bank' ? $request->bank_name : null,
+                'wallet_type'    => $request->payment_method === 'e-wallet' ? $request->wallet_type : null,
+                'payment_proof'  => $proofPath,
+                'total_harga'    => $total_harga,
+            ]);
+
+            OrderItem::create([
+                'order_id'   => $order->id,
+                'product_id' => $product->id,
+                'variant_id' => $variant->id,
+                'size'       => $request->ukuran,
+                'quantity'   => $request->jumlah,
+                'price'      => $sizePrice->price,
+                'total'      => $total_harga,
+            ]);
+
+            $variant->decrement('stock', $request->jumlah);
+        });
 
         return redirect()->route('orders.index')->with('success', 'Order berhasil dibuat!');
     }
@@ -92,31 +111,51 @@ class OrderController extends Controller
 
         try {
             DB::transaction(function () use ($cartItems, $request, $proofPath, $user) {
+                $totalOrder = 0;
+
+                $order = Order::create([
+                    'user_id'        => $user->id,
+                    'status'         => 'Menunggu Pembayaran',
+                    'payment_method' => $request->payment_method,
+                    'bank_name'      => $request->payment_method === 'bank' ? $request->bank_name : null,
+                    'wallet_type'    => $request->payment_method === 'e-wallet' ? $request->wallet_type : null,
+                    'payment_proof'  => $proofPath,
+                ]);
+
                 foreach ($cartItems as $item) {
                     $variant = $item->variant;
+                    $product = $item->product;
 
-                    if (!$variant || $variant->stock < $item->jumlah) {
-                        throw new \Exception("Stok tidak cukup untuk {$item->product->name} warna {$variant->color}.");
+                    if (!$product || !$variant || $variant->stock < $item->jumlah) {
+                        throw new \Exception("Produk {$product->name} tidak valid atau stok habis.");
                     }
 
-                    Order::create([
-                        'user_id'        => $user->id,
-                        'product_id'     => $item->product_id,
-                        'variant_id'     => $item->variant_id,
-                        'warna'          => $variant->color,
-                        'ukuran'         => $item->ukuran,
-                        'jumlah'         => $item->jumlah,
-                        'total_harga'    => $item->product->price * $item->jumlah,
-                        'status'         => 'Menunggu Pembayaran',
-                        'payment_method' => $request->payment_method,
-                        'bank_name'      => $request->payment_method === 'bank' ? $request->bank_name : null,
-                        'wallet_type'    => $request->payment_method === 'e-wallet' ? $request->wallet_type : null,
-                        'payment_proof'  => $proofPath,
+                    $sizePrice = $product->sizePrices()
+                                         ->where('size', $item->ukuran)
+                                         ->first();
+
+                    if (!$sizePrice) {
+                        throw new \Exception("Harga untuk ukuran {$item->ukuran} tidak ditemukan.");
+                    }
+
+                    $subtotal = $sizePrice->price * $item->jumlah;
+                    $totalOrder += $subtotal;
+
+                    OrderItem::create([
+                        'order_id'   => $order->id,
+                        'product_id' => $product->id,
+                        'variant_id' => $variant->id,
+                        'size'       => $item->ukuran,
+                        'quantity'   => $item->jumlah,
+                        'price'      => $sizePrice->price,
+                        'total'      => $subtotal,
                     ]);
 
                     $variant->decrement('stock', $item->jumlah);
                     $item->delete();
                 }
+
+                $order->update(['total_harga' => $totalOrder]);
             });
 
             return redirect()->route('orders.index')->with('success', 'Checkout berhasil! Silakan tunggu konfirmasi.');

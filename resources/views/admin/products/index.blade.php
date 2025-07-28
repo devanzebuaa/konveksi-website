@@ -19,7 +19,6 @@
                 <th>Nama</th>
                 <th>Kategori</th>
                 <th>Harga</th>
-                <th>Unggulan</th>
                 <th>Aksi</th>
             </tr>
         </thead>
@@ -35,23 +34,6 @@
                 <td>{{ $product->name }}</td>
                 <td>{{ $product->category }}</td>
                 <td>Rp {{ number_format($product->price, 0, ',', '.') }}</td>
-
-                {{-- ✅ Kolom Unggulan --}}
-                <td class="text-center">
-                    @if ($product->is_featured)
-                        <form action="{{ route('admin.products.toggle-featured', $product->id) }}" method="POST">
-                            @csrf
-                            @method('PATCH')
-                            <button class="btn btn-sm btn-warning">Hapus</button>
-                        </form>
-                    @else
-                        <form action="{{ route('admin.products.toggle-featured', $product->id) }}" method="POST">
-                            @csrf
-                            @method('PATCH')
-                            <button class="btn btn-sm btn-outline-primary">Unggulkan</button>
-                        </form>
-                    @endif
-                </td>
 
                 {{-- Aksi Edit & Hapus --}}
                 <td>

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -29,7 +30,6 @@
         <div class="container">
             <a class="navbar-brand" href="/">
                 <img src="{{ asset('images/Logo.png') }}" alt="Logo" height="100">
-                Dinara Konveksi
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -78,7 +78,7 @@
                             @php
                                 $orders = \App\Models\Order::with('product')
                                     ->where('user_id', auth()->id())
-                                    ->where('status', '!=', 'Menunggu Pembayaran')
+                                    ->where('status', '!=', 'Menunggu Konfirmasi')
                                     ->latest()->take(5)->get();
                                 $notifCount = $orders->where('user_notified', false)->count();
                             @endphp
@@ -145,24 +145,25 @@
             <div class="row">
                 <div class="col-md-4">
                     <h5>Tentang Kami</h5>
-                    <p>Dinara Konveksi adalah perusahaan konveksi profesional yang menyediakan berbagai produk pakaian berkualitas tinggi sejak 2010.</p>
+                    <p>Kami adalah konveksi terpercaya yang mengutamakan kualitas, ketepatan waktu, dan kepuasan pelanggan dalam setiap jahitan.</p>
                 </div>
                 <div class="col-md-4">
                     <h5>Kontak</h5>
-                    <p><i class="fas fa-map-marker-alt"></i> Jl. Diponegoro No 01</p>
-                    <p><i class="fas fa-phone"></i> 082324-872377</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Jalan Diponegoro No. 01, RT 04/RW 03, Kecamatan Sumpiuh, Kabupaten Banyumas, Jawa Tengah, 53195</p>
+                    <p><i class="fas fa-phone"></i> 085228683441</p>
                     <p><i class="fas fa-envelope"></i> dinarakonveksi@gmail.com</p>
                 </div>
                 <div class="col-md-4">
                     <h5>Sosial Media</h5>
                     <a href="#" class="text-white me-2"><i class="fab fa-facebook-f fa-lg"></i></a>
                     <a href="#" class="text-white me-2"><i class="fab fa-instagram fa-lg"></i></a>
-                    <a href="#" class="text-white me-2"><i class="fab fa-whatsapp fa-lg"></i></a>
+                    <a href="https://wa.me/6285228683441" class="text-white me-2" target="_blank" rel="noopener">
+                        <i class="fab fa-whatsapp fa-lg"></i></a>
                 </div>
             </div>
             <hr>
             <div class="text-center">
-                <p class="mb-0">&copy; 2025 Dinara Konveksi. All Rights Reserved.</p>
+                <p class="mb-0">&copy; 2025 Dinara Konveksi.</p>
             </div>
         </div>
     </footer>

@@ -10,9 +10,7 @@ export default function Login({ status, canResetPassword }) {
   const submit = (e) => {
     e.preventDefault();
     post(route('login'), {
-      onFinish: () => {
-        window.location.hr
-      },
+      onFinish: () => reset('password'),
     });
   };
 
@@ -21,20 +19,13 @@ export default function Login({ status, canResetPassword }) {
       <Head title="Login" />
 
       <div className="min-h-screen flex items-center justify-center bg-black relative overflow-hidden">
-
         {/* Animated Gradient Background */}
-        <div className="absolute inset-0
-          bg-[linear-gradient(135deg,_#0085FF,_#003465)]
-          bg-[length:200%_200%]
-          bg-[position:100%_50%]
-          animate-gradient-diagonal
-          z-0" />
+        <div className="absolute inset-0 bg-[linear-gradient(135deg,#0085FF,#003465)] bg-[length:200%_200%] bg-[position:100%_50%] animate-gradient-diagonal z-0" />
 
         {/* Overlay */}
         <div className="absolute inset-0 bg-black/50 backdrop-blur-sm z-10" />
 
         <div className="z-20 relative flex w-full max-w-6xl mx-auto p-6 md:flex-row flex-col items-center justify-center">
-
           {/* Left Logo */}
           <div className="md:w-1/2 w-full flex justify-center items-center p-6">
             <img
@@ -47,16 +38,24 @@ export default function Login({ status, canResetPassword }) {
           {/* Right Form */}
           <div className="md:w-1/2 w-full p-6">
             <div className="p-8 rounded-xl bg-white/10 backdrop-blur-xl border border-white/10 shadow-xl">
-
               <h2 className="text-white text-2xl font-bold mb-6">Login Dinara Konveksi</h2>
 
+              {/* Status Message */}
               {status && (
                 <div className="mb-4 text-sm font-medium text-green-400">
                   {status}
                 </div>
               )}
 
+              {/* General Error Alert */}
+              {(errors.email || errors.password) && (
+                <div className="mb-4 text-sm font-medium text-red-300 bg-red-500/10 px-4 py-2 rounded">
+                  {errors.email || errors.password}
+                </div>
+              )}
+
               <form onSubmit={submit}>
+                {/* Email */}
                 <div className="mb-4">
                   <label htmlFor="email" className="block text-sm font-medium text-white">Email</label>
                   <input
@@ -65,8 +64,7 @@ export default function Login({ status, canResetPassword }) {
                     name="email"
                     value={data.email}
                     onChange={(e) => setData('email', e.target.value)}
-                    className="mt-1 w-full px-4 py-2 rounded-md bg-white/20 border border-white/30
-                      focus:outline-none focus:ring-2 focus:ring-indigo-400 text-white placeholder-gray-300"
+                    className="mt-1 w-full px-4 py-2 rounded-md bg-white/20 border border-white/30 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-white placeholder-gray-300"
                     autoComplete="username"
                     autoFocus
                     placeholder="you@example.com"
@@ -76,6 +74,7 @@ export default function Login({ status, canResetPassword }) {
                   )}
                 </div>
 
+                {/* Password */}
                 <div className="mb-4">
                   <label htmlFor="password" className="block text-sm font-medium text-white">Password</label>
                   <input
@@ -84,8 +83,7 @@ export default function Login({ status, canResetPassword }) {
                     name="password"
                     value={data.password}
                     onChange={(e) => setData('password', e.target.value)}
-                    className="mt-1 w-full px-4 py-2 rounded-md bg-white/20 border border-white/30
-                      focus:outline-none focus:ring-2 focus:ring-indigo-400 text-white placeholder-gray-300"
+                    className="mt-1 w-full px-4 py-2 rounded-md bg-white/20 border border-white/30 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-white placeholder-gray-300"
                     autoComplete="current-password"
                     placeholder="••••••••"
                   />
@@ -94,6 +92,7 @@ export default function Login({ status, canResetPassword }) {
                   )}
                 </div>
 
+                {/* Remember */}
                 <div className="mb-4 flex items-center">
                   <input
                     id="remember"
@@ -108,6 +107,7 @@ export default function Login({ status, canResetPassword }) {
                   </label>
                 </div>
 
+                {/* Buttons */}
                 <div className="flex items-center justify-between">
                   {canResetPassword && (
                     <Link
@@ -121,8 +121,7 @@ export default function Login({ status, canResetPassword }) {
                   <button
                     type="submit"
                     disabled={processing}
-                    className="ml-4 px-5 py-2 rounded-md bg-indigo-500 hover:bg-indigo-600
-                      transition-all font-semibold text-sm text-white"
+                    className="ml-4 px-5 py-2 rounded-md bg-indigo-500 hover:bg-indigo-600 transition-all font-semibold text-sm text-white"
                   >
                     Log in
                   </button>

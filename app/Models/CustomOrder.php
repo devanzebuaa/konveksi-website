@@ -10,13 +10,23 @@ class CustomOrder extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'name',
         'product_type',
         'size_detail',
         'description',
         'design_file',
         'quantity',
-        'payment_method',
         'contact',
     ];
+
+    public function messages()
+    {
+        return $this->hasMany(\App\Models\Message::class, 'order_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(\App\Models\User::class);
+    }
 }

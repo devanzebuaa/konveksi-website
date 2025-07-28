@@ -25,9 +25,10 @@
                         <th>Produk</th>
                         <th>Jumlah Pesanan</th>
                         <th>Kontak</th>
-                        <th>Metode Pembayaran</th>
+                        <th>Deskripsi</th>
                         <th>File Desain</th>
-                        <th>Aksi</th>
+                        <th>Chat</th>
+                        <th>Hapus</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -38,7 +39,9 @@
                             <td>{{ $order->product_type }}</td>
                             <td>{{ $order->quantity }}</td>
                             <td>{{ $order->contact }}</td>
-                            <td>{{ $order->payment_method }}</td>
+                            <td>
+                                {{ $order->description ?? '-' }}
+                            </td>
                             <td>
                                 @if ($order->design_file)
                                     <a href="{{ asset('storage/' . $order->design_file) }}" target="_blank" class="btn btn-sm btn-outline-secondary">
@@ -49,10 +52,15 @@
                                 @endif
                             </td>
                             <td>
+                                <a href="{{ route('admin.custom-orders.chat', $order->id) }}" class="btn btn-sm btn-outline-primary w-100" title="Lihat Chat">
+                                    <i class="fas fa-comments"></i> Chat
+                                </a>
+                            </td>
+                            <td>
                                 <form action="{{ route('admin.custom-orders.destroy', $order->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus pesanan ini?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button class="btn btn-sm btn-danger">
+                                    <button class="btn btn-sm btn-danger w-100">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>

@@ -1,20 +1,42 @@
 @extends('layouts.admin')
 
-@section('title', 'Detail Order #'.$order->id)
+@section('title', 'Detail Order #' . $order->id)
 
 @section('content')
 <div class="container my-5">
     <h2 class="mb-4">📄 Detail Order #{{ $order->id }}</h2>
 
-    <div class="card mb-4">
+    <div class="card shadow-sm mb-4">
         <div class="card-body">
-            <p><strong>Pemesan:</strong> {{ $order->user->name }}</p>
+            {{-- Informasi Pemesan --}}
+            <p><strong>Pemesan:</strong> {{ optional($order->user)->name ?? '-' }}</p>
             <p><strong>Alamat Pengiriman:</strong> {{ $order->address }}</p>
-            <p><strong>Produk:</strong> {{ $order->product->name }}</p>
-            <p><strong>Warna:</strong> {{ ucfirst($order->warna) }}</p>
+            <p><strong>Produk:</strong> {{ optional($order->product)->name ?? '-' }}</p>
+            <p><strong>Varian/Warna:</strong> {{ ucfirst($order->warna) }}</p>
             <p><strong>Ukuran:</strong> {{ $order->ukuran }}</p>
             <p><strong>Jumlah:</strong> {{ $order->jumlah }}</p>
-            <p><strong>Total:</strong> Rp {{ number_format($order->total_harga, 0, ',', '.') }}</p>
+
+            {{-- Harga Berdasarkan Ukuran --}}
+            @php
+                $hargaUkuran = optional(
+                    \App\Models\ProductSizePrice::where('product_id', $order->product_id)
+                        ->where('size', $order->ukuran)
+                        ->first()
+                )->price;
+            @endphp
+
+            <p><strong>Harga per Ukuran:</strong> 
+                Rp{{ number_format($hargaUkuran ?? 0, 0, ',', '.') }}
+            </p>
+
+            <p><strong>Total Dihitung (Ukuran × Jumlah):</strong> 
+                Rp{{ number_format(($hargaUkuran ?? 0) * $order->jumlah, 0, ',', '.') }}
+            </p>
+
+            <p><strong>Total Tersimpan (Database):</strong> 
+                Rp{{ number_format($order->total_harga, 0, ',', '.') }}
+            </p>
+
             <p><strong>Metode Pembayaran:</strong> {{ ucfirst($order->payment_method) }}</p>
 
             @if($order->bank_name)
@@ -22,25 +44,24 @@
             @endif
 
             @if($order->wallet_type)
-                <p><strong>E-Wallet:</strong> {{ $order->wallet_type }}</p>
+                <p><strong>E-Wallet:</strong> {{ ucfirst($order->wallet_type) }}</p>
             @endif
 
-            <p><strong>Status Saat Ini:</strong>
-                <span class="badge
-                    @if($order->status === 'Menunggu Pembayaran') bg-warning
-                    @elseif($order->status === 'Sudah Dibayar') bg-success
-                    @elseif($order->status === 'Diproses') bg-primary
-                    @elseif($order->status === 'Dikirim') bg-info
-                    @elseif($order->status === 'Selesai') bg-secondary
-                    @elseif($order->status === 'Dibatalkan') bg-danger
-                    @endif">
-                    {{ $order->status }}
-                </span>
-            </p>
+            {{-- Status --}}
+            <p><strong>Status Saat Ini:</strong> {!! $order->status_badge !!}</p>
 
+            {{-- Bukti Pembayaran --}}
             @if($order->payment_proof)
-                <p><strong>Bukti Transfer:</strong><br>
-                    <img src="{{ asset('storage/' . $order->payment_proof) }}" alt="Bukti Transfer" style="max-width: 300px;" class="img-fluid rounded shadow">
+                <p><strong>Bukti Transfer:</strong></p>
+                <img src="{{ asset('storage/' . $order->payment_proof) }}" alt="Bukti Transfer" class="img-fluid rounded shadow" style="max-width: 300px;">
+            @endif
+
+            {{-- Tombol Lihat Invoice --}}
+            @if($order->invoice_path)
+                <p class="mt-3">
+                    <a href="{{ asset('storage/' . $order->invoice_path) }}" target="_blank" class="btn btn-outline-primary">
+                        📄 Lihat Invoice
+                    </a>
                 </p>
             @endif
 
@@ -59,10 +80,10 @@
                         @endforeach
                     </select>
                 </div>
-                <button type="submit" class="btn btn-success">Update Status</button>
+                <button type="submit" class="btn btn-success">✅ Update Status</button>
             </form>
 
-            {{-- Tombol Hapus Order --}}
+            {{-- Form Hapus Order --}}
             <form action="{{ route('admin.orders.destroy', $order->id) }}" method="POST" class="mt-3" onsubmit="return confirm('Yakin ingin menghapus order ini?')">
                 @csrf
                 @method('DELETE')

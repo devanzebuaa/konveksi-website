@@ -23,4 +23,10 @@ class Product extends Model
     {
         return $this->hasMany(ProductVariant::class);
     }
+
+    // Relasi ke tabel product_size_prices
+    public function sizePrices()
+    {
+        return $this->hasMany(ProductSizePrice::class);
+    }
 }

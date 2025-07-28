@@ -33,7 +33,7 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         $user = Auth::user(); // Fix merah
-        if ($user->role == 'admin') {
+        if ($user->is_admin == 1) {
             return Inertia::location('/admin/dashboard');
         }
         return Inertia::location(route('home.index'));

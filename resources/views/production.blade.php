@@ -27,42 +27,7 @@
             @endforeach
         </div>
         
-        <div class="row mt-5">
-            <div class="col-lg-6 mb-4 mb-lg-0">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h3 class="fw-bold mb-4">Fasilitas Produksi</h3>
-                        <p>Kami Memiliki Fasilitas Produksi Modern Dengan Mesin-Mesin Terkini Untuk Memastikan Kualitas Dan Konsistensi Produk.</p>
-                        <ul>
-                            <li>Mesin Jahit High-Speed</li>
-                            <li>Mesin Obras Otomatis</li>
-                            <li>Mesin Cutting Digital</li>
-                            <li>Quality Control Station</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
             
-            <div class="col-lg-6">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h3 class="fw-bold mb-4">Standar Kualitas</h3>
-                        <p>Setiap produk melewati pemeriksaan ketat sebelum dikirim ke pelanggan:</p>
-                        <div class="progress mb-3">
-                            <div class="progress-bar bg-success" role="progressbar" style="width: 95%">95% Lulus QC</div>
-                        </div>
-                        <div class="progress mb-3">
-                            <div class="progress-bar bg-info" role="progressbar" style="width: 98%">98% Ketepatan Waktu</div>
-                        </div>
-                        <div class="progress">
-                            <div class="progress-bar bg-primary" role="progressbar" style="width: 99%">99% Kepuasan Pelanggan</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
 @endsection
 
 @section('styles')

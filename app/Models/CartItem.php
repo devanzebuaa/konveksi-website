@@ -16,6 +16,7 @@ class CartItem extends Model
         'variant_id',
         'warna',
         'ukuran',
+        'harga_satuan',
         'jumlah',
     ];
 

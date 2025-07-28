@@ -4,64 +4,33 @@
 
 @section('content')
 
-<!-- About Section -->
-<section class="py-5">
-    <div class="container">
-        <div class="row">
-            <div class="col">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h2 class="fw-bold mb-4">Tentang Dinara Konveksi</h2>
-                        <p>Dinara Konveksi didirikan pada tahun 2010 dengan visi menjadi penyedia produk konveksi terbaik di Indonesia. Dengan pengalaman lebih dari 10 tahun di industri tekstil, kami telah melayani berbagai klien dari perusahaan kecil hingga besar.</p>
-                        <p>Kami mengutamakan kualitas, ketepatan waktu, dan pelayanan yang ramah kepada setiap pelanggan. Tim kami terdiri dari ahli-ahli di bidangnya yang siap memberikan solusi terbaik untuk kebutuhan konveksi Anda.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Vision & Mission -->
+<!-- Tentang Dinara Konveksi Modern -->
 <section class="py-5 bg-light">
     <div class="container">
-        <div class="row">
-            <!-- Visi -->
-            <div class="col-md-6 mb-4 mb-md-0">
-                <div class="card h-100 shadow-sm">
-                    <div class="card-body">
-                        <div class="text-center mb-4">
-                            <div class="icon-box bg-primary text-white mx-auto rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                                <i class="fas fa-eye fa-2x"></i>
-                            </div>
-                        </div>
-                        <h3 class="text-center mb-4">Visi</h3>
-                        <p class="text-center">"Menjadi Perusahaan Konveksi Terdepan di Indonesia dengan inovasi dan kualitas terbaik yang berkelanjutan."</p>
+        <div class="row align-items-center justify-content-center">
+            <div class="col-lg-7 mb-4 mb-lg-0">
+                <div class="mb-4">
+                    <h1 class="fw-bold mb-3" style="font-size:2.5rem; letter-spacing:0.5px;">Dinara Konveksi</h1>
+                    <div class="mb-3" style="font-size:1.15rem; color:#444; text-align:justify; line-height:1.7;">
+                        Dinara Konveksi adalah platform e-commerce yang menyediakan solusi lengkap untuk kebutuhan pakaian custom, seragam, dan fashion berkualitas. Kami menghubungkan pelanggan dengan layanan konveksi modern, proses pemesanan online yang mudah, serta dukungan tim profesional dari desain hingga pengiriman. Dengan sistem digital, pelanggan dapat memantau status pesanan, memilih bahan, desain, dan melakukan pembayaran secara aman dari mana saja.
                     </div>
                 </div>
+                <div class="mb-4">
+                    <ul class="ps-3" style="font-size:1.08rem; color:#333;">
+                        <li class="mb-2">Pesan pakaian custom, seragam, dan fashion secara online.</li>
+                        <li class="mb-2">Pilihan bahan, warna, dan desain sesuai kebutuhan.</li>
+                        <li class="mb-2">Proses produksi transparan dan terpantau.</li>
+                        <li>Pembayaran aman dan pengiriman ke seluruh Indonesia.</li>
+                    </ul>
+                </div>
+                <a href="{{ route('products.index') }}" class="btn btn-primary btn-lg shadow">Lihat Produk</a>
             </div>
-
-            <!-- Misi -->
-            <div class="col-md-6">
-                <div class="card h-100 shadow-sm">
-                    <div class="card-body">
-                        <div class="text-center mb-4">
-                            <div class="icon-box bg-primary text-white mx-auto rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                                <i class="fas fa-bullseye fa-2x"></i>
-                            </div>
-                        </div>
-                        <h3 class="text-center mb-4">Misi</h3>
-                        <ul>
-                            <li>Menyediakan produk berkualitas tinggi dengan bahan terbaik</li>
-                            <li>Memberikan pelayanan prima kepada pelanggan</li>
-                            <li>Mengembangkan SDM yang profesional dan kreatif</li>
-                            <li>Berinovasi dalam desain dan teknologi produksi</li>
-                            <li>Berkontribusi positif bagi industri tekstil Indonesia</li>
-                        </ul>
-                    </div>
-                </div>
+            <div class="col-lg-5 text-center d-flex align-items-center justify-content-center" style="gap:0;">
+                <img src="/images/Gambar.jpg" alt="Dinara Konveksi" class="img-fluid shadow-lg" style="max-width:480px; width:100%; height:420px; object-fit:cover; border-radius:18px; border:8px solid #fff; margin-bottom:0;">
             </div>
         </div>
     </div>
 </section>
+
 
 @endsection

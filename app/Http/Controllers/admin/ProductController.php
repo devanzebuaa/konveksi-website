@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Models\ProductSizePrice;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -24,38 +25,38 @@ class ProductController extends Controller
     {
         $request->validate([
             'name' => 'required|string',
-            'price' => 'required|numeric',
             'category' => 'required|string',
             'description' => 'required|string',
             'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
             'variants.*.color' => 'required|string',
             'variants.*.image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'size_prices' => 'required|array',
+            'size_prices.*' => 'array',
+            'size_prices.*.*' => 'nullable|numeric|min:0',
         ]);
 
-        // Upload gambar produk
+        // Upload gambar utama produk
         $imageName = time() . '_' . $request->image->getClientOriginalName();
         $request->image->move(public_path('images/products'), $imageName);
 
         $product = Product::create([
             'name' => $request->name,
-            'price' => $request->price,
+            'price' => $request->price ?? 0,
             'category' => $request->category,
             'description' => $request->description,
             'image' => $imageName,
             'is_featured' => $request->has('is_featured'),
         ]);
 
-        // Simpan Variants
+        // Simpan varian dan gambar varian
         if ($request->has('variants')) {
             foreach ($request->input('variants') as $index => $variantData) {
                 $variantImage = null;
-
                 if ($request->hasFile("variants.$index.image")) {
                     $file = $request->file("variants.$index.image");
                     $variantImage = time() . '_' . $file->getClientOriginalName();
                     $file->move(public_path('images/variants'), $variantImage);
                 }
-
                 ProductVariant::create([
                     'product_id' => $product->id,
                     'color' => $variantData['color'],
@@ -64,12 +65,29 @@ class ProductController extends Controller
             }
         }
 
+        // Simpan size_prices untuk semua varian
+        if ($request->has('size_prices')) {
+            foreach ($request->size_prices as $variantIdx => $sizes) {
+                if (is_array($sizes)) {
+                    foreach ($sizes as $size => $price) {
+                        if ($price !== null && $price !== '') {
+                            ProductSizePrice::create([
+                                'product_id' => $product->id,
+                                'size' => $size,
+                                'price' => $price,
+                            ]);
+                        }
+                    }
+                }
+            }
+        }
+
         return redirect()->route('admin.products.index')->with('success', 'Produk berhasil ditambahkan.');
     }
 
     public function edit(Product $product)
     {
-        $product->load('variants');
+        $product->load(['variants', 'sizePrices']);
         return view('admin.products.edit', compact('product'));
     }
 
@@ -77,13 +95,15 @@ class ProductController extends Controller
     {
         $request->validate([
             'name' => 'required|string',
-            'price' => 'required|numeric',
             'category' => 'required|string',
             'description' => 'required|string',
+            'price' => 'nullable|numeric|min:0',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'size_prices' => 'required|array',
+            'size_prices.*' => 'nullable|numeric|min:0',
         ]);
 
-        $data = $request->only(['name', 'price', 'category', 'description']);
+        $data = $request->only(['name', 'category', 'description', 'price']);
         $data['is_featured'] = $request->has('is_featured');
 
         if ($request->hasFile('image')) {
@@ -93,6 +113,22 @@ class ProductController extends Controller
         }
 
         $product->update($data);
+
+        // Hapus harga lama
+        $product->sizePrices()->delete();
+
+        // Simpan ulang harga per ukuran (langsung dari size_prices[SIZE])
+        if ($request->has('size_prices')) {
+            foreach ($request->size_prices as $size => $price) {
+                if ($price !== null && $price !== '') {
+                    ProductSizePrice::create([
+                        'product_id' => $product->id,
+                        'size' => $size,
+                        'price' => $price,
+                    ]);
+                }
+            }
+        }
 
         return redirect()->route('admin.products.index')->with('success', 'Produk berhasil diperbarui.');
     }

@@ -23,6 +23,15 @@
             @enderror
         </div>
 
+        {{-- Harga --}}
+        <div class="mb-3">
+            <label for="price" class="form-label">Harga</label>
+            <input type="number" name="price" id="price" class="form-control" min="0" value="{{ old('price', $variant->price) }}" required>
+            @error('price')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
+        </div>
+
         {{-- Gambar Varian --}}
         <div class="mb-3">
             <label for="image" class="form-label">Gambar (Opsional, isi jika ingin ganti)</label>
